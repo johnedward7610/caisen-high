@@ -7,39 +7,14 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <style>
 /* ---------- GENERAL ---------- */
-:root{
-  --bg:#fbf8ff; --card:#fff; --accent:#9c6bff; --muted:#7b6f9a;
-}
-body{
-  font-family:Inter,Arial,Helvetica,sans-serif;
-  background:var(--bg);
-  margin:0;
-  padding:20px;
-  box-sizing:border-box;
-  color:#111;
-}
-header{
-  display:flex;gap:12px;align-items:center;
-  justify-content:space-between;
-  max-width:900px;margin:0 auto 18px;
-  padding:12px 16px;
-  border-radius:12px;
-  background:linear-gradient(90deg,#e8dbff,#f3eaff);
-  box-shadow:0 6px 18px rgba(22,7,53,0.06)
-}
+:root{--bg:#fbf8ff;--card:#fff;--accent:#9c6bff;--muted:#7b6f9a;}
+body{font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;box-sizing:border-box;color:#111;}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 18px;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,#e8dbff,#f3eaff);box-shadow:0 6px 18px rgba(22,7,53,0.06)}
 header h1{font-size:18px;margin:0;color:#2b1b5b}
 .nav-buttons{display:flex;gap:8px}
-.nav-buttons button{
-  background:transparent;border:1px solid rgba(43,27,91,0.12);
-  padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)
-}
-.nav-buttons button.active{
-  background:var(--accent);color:white;border-color:var(--accent)
-}
-.app{
-  max-width:900px;margin:0 auto;
-  display:grid;grid-template-columns:1fr;gap:18px
-}
+.nav-buttons button{background:transparent;border:1px solid rgba(43,27,91,0.12);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)}
+.nav-buttons button.active{background:var(--accent);color:white;border-color:var(--accent)}
+.app{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:18px}
 .screen{display:none}
 .screen.show{display:block}
 .post-card{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 20px rgba(22,7,53,0.05)}
@@ -50,36 +25,15 @@ textarea{width:100%;min-height:70px;border-radius:10px;padding:10px;border:1px s
 .post{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(22,7,53,0.05)}
 .post-head{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
 .post-text{word-break:break-word;white-space:normal;flex:1;min-width:0}
-.avatar{
-  width:44px;height:44px;border-radius:50%;flex-shrink:0;object-fit:cover;
-  background:linear-gradient(135deg,#f2e6ff,#e6d3ff);
-  display:flex;align-items:center;justify-content:center;color:#3e2b6f;
-  font-weight:700;font-size:18px
-}
+.avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;object-fit:cover;background:linear-gradient(135deg,#f2e6ff,#e6d3ff);display:flex;align-items:center;justify-content:center;color:#3e2b6f;font-weight:700;font-size:18px}
 .comment{background:#f6f3ff;padding:8px;border-radius:10px;margin-top:8px;font-size:14px}
 .actions{display:flex;gap:12px;margin-top:8px;font-size:14px;color:#6d5c96;cursor:pointer}
-
 /* ---------- FULLSCREEN ---------- */
-.fullscreen-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.9);
-  display:none;align-items:center;justify-content:center;
-  z-index:2000;flex-direction:column;
-}
-.fullscreen-overlay #fsContent{
-  max-width:90%;max-height:80%;
-}
-.fullscreen-overlay video,img{
-  max-width:90%;max-height:80%;border-radius:10px;
-}
-.fs-btns{
-  width:100%;display:flex;justify-content:space-between;padding:15px;
-  position:absolute;top:0;box-sizing:border-box;
-}
-.fs-btns button{
-  background: rgba(255,255,255,0.25);border:none;color:white;
-  padding:8px 14px;border-radius:8px;cursor:pointer;font-size:16px;
-}
-
+.fullscreen-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:2000;flex-direction:column;}
+.fullscreen-overlay #fsContent{max-width:90%;max-height:80%;}
+.fullscreen-overlay video,img{max-width:90%;max-height:80%;border-radius:10px;}
+.fs-btns{width:100%;display:flex;justify-content:space-between;padding:15px;position:absolute;top:0;box-sizing:border-box;}
+.fs-btns button{background: rgba(255,255,255,0.25);border:none;color:white;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:16px;}
 /* ---------- MEDIA CAROUSEL ---------- */
 .media-carousel{position:relative;width:300px;height:300px;margin-top:8px;border-radius:10px;overflow:hidden}
 .media-carousel img,.media-carousel video{width:100%;height:100%;object-fit:cover;display:none;cursor:pointer}
@@ -88,11 +42,7 @@ textarea{width:100%;min-height:70px;border-radius:10px;padding:10px;border:1px s
 .carousel-btn.prev{left:6px}
 .carousel-btn.next{right:6px}
 .post-header{display:flex;align-items:flex-start;gap:10px}
-.post-pfp{
-  width:45px;height:45px;border-radius:50%;flex-shrink:0;object-fit:cover;
-  background:#d9c4ff;display:flex;justify-content:center;align-items:center;
-  font-weight:bold;font-size:20px;color:#4a2fa3;
-}
+.post-pfp{width:45px;height:45px;border-radius:50%;flex-shrink:0;object-fit:cover;background:#d9c4ff;display:flex;justify-content:center;align-items:center;font-weight:bold;font-size:20px;color:#4a2fa3;}
 </style>
 </head>
 <body>
@@ -133,7 +83,6 @@ textarea{width:100%;min-height:70px;border-radius:10px;padding:10px;border:1px s
   </div>
 </div>
 
-<!-- FULLSCREEN OVERLAY -->
 <div id="fullscreenOverlay" class="fullscreen-overlay">
   <div class="fs-btns">
     <button id="closeFS">Close</button>
@@ -145,7 +94,6 @@ textarea{width:100%;min-height:70px;border-radius:10px;padding:10px;border:1px s
 <script>
 const TEACHER_KEY = "TEACHER-123";
 if(localStorage.teacherUnlocked!=="yes") localStorage.teacherUnlocked="no";
-
 const socket = io();
 let allPosts = [];
 
@@ -168,13 +116,10 @@ const fsClose = document.getElementById("closeFS");
 const fsDownload = document.getElementById("downloadFS");
 const fsContent = document.getElementById("fsContent");
 
-// SHOW/HIDE SCREENS
-function showTeacher(){ studentScreen.classList.remove("show"); teacherScreen.classList.add("show"); studentBtn.classList.remove("active"); teacherBtn.classList.add("active"); }
-function showStudent(){ teacherScreen.classList.remove("show"); studentScreen.classList.add("show"); teacherBtn.classList.remove("active"); studentBtn.classList.add("active"); }
-
-studentBtn.onclick=showStudent;
-teacherBtn.onclick=()=>{ localStorage.teacherUnlocked==="yes"?showTeacher():teacherLogin.style.display="flex"; };
-teacherLoginBtn.onclick=()=>{
+// Show/hide screens
+studentBtn.onclick = ()=>{ studentScreen.classList.add("show"); teacherScreen.classList.remove("show"); studentBtn.classList.add("active"); teacherBtn.classList.remove("active"); }
+teacherBtn.onclick = ()=>{ localStorage.teacherUnlocked==="yes"?showTeacher():teacherLogin.style.display="flex"; };
+teacherLoginBtn.onclick = ()=>{
   if(teacherKeyInput.value===TEACHER_KEY){
     localStorage.teacherUnlocked="yes";
     teacherKeyInput.value="";
@@ -182,10 +127,12 @@ teacherLoginBtn.onclick=()=>{
     showTeacher();
   } else alert("Incorrect key");
 };
-logoutBtn.onclick=()=>{ localStorage.teacherUnlocked="no"; showStudent(); }
+logoutBtn.onclick = ()=>{ localStorage.teacherUnlocked="no"; studentScreen.classList.add("show"); teacherScreen.classList.remove("show"); teacherBtn.classList.remove("active"); studentBtn.classList.add("active"); }
+
+function showTeacher(){ studentScreen.classList.remove("show"); teacherScreen.classList.add("show"); studentBtn.classList.remove("active"); teacherBtn.classList.add("active"); }
 
 // POSTING
-postBtn.onclick=async()=>{
+postBtn.onclick = async ()=>{
   const text = postText.value.trim();
   const files = [...postFiles.files];
   if(!text && !files.length) return;
@@ -198,53 +145,18 @@ postBtn.onclick=async()=>{
     media = (await res.json()).files;
   }
 
-  const post = {
-    id: Date.now(),
-    text,
-    media,
-    likes: 0,
-    comments: [],
-    created: new Date(),
-    postedBy: "teacher"
-  };
+  const post = { id: Date.now(), text, media, likes:0, comments:[], created:new Date(), postedBy:"teacher" };
   socket.emit("newPost", post);
   postText.value=""; postFiles.value="";
 }
 
-// SOCKET EVENTS
-socket.on("allPosts", posts=>{
-  allPosts = posts.sort((a,b)=>new Date(b.created)-new Date(a.created));
-  renderAllPosts();
-});
-socket.on("postAdded", post=>{
-  allPosts.unshift(post);
-  renderAllPosts();
-});
-socket.on("postUpdated", post=>{
-  const idx = allPosts.findIndex(p=>p.id===post.id);
-  if(idx!==-1) allPosts[idx]=post;
-  renderAllPosts();
-});
-
 // RENDER POSTS
-function renderAllPosts(){
-  feed.innerHTML=""; teacherFeed.innerHTML="";
-  allPosts.forEach(p=>{
-    feed.append(postCard(p,false));
-    teacherFeed.append(postCard(p,true));
-  });
-}
-
 function postCard(p, editable){
-  const d = document.createElement("div");
-  d.className="post";
-  d.dataset.id = p.id;
-
+  const d = document.createElement("div"); d.className="post";
   const dateStr = new Date(p.created).toLocaleString();
-  const words = p.text.trim().split(/\s+/);
-  const maxWords=15;
-  let shortText=p.text, fullText=p.text, isTruncated=false;
-  if(words.length>maxWords){ shortText=words.slice(0,maxWords).join(" ")+"..."; isTruncated=true; }
+  const words = p.text.trim().split(/\s+/); const maxWords = 15;
+  let shortText = p.text, fullText = p.text; let isTruncated=false;
+  if(words.length>maxWords){ shortText = words.slice(0,maxWords).join(" ")+"..."; isTruncated=true; }
 
   d.innerHTML = `
     <div class="post-head" style="justify-content:space-between">
@@ -255,116 +167,68 @@ function postCard(p, editable){
       </div>
       <div style="font-size:12px;color:#999">${dateStr}</div>
     </div>
-    ${p.media?.length?`
-      <div class="media-carousel" data-index="0">
-        ${p.media.map((m,i)=>m.type.startsWith("image/")?`<img src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="image">`:`<video src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="video" controls></video>`).join("")}
-        ${p.media.length>1?`<button class="carousel-btn prev">‹</button><button class="carousel-btn next">›</button>`:``}
-      </div>
-    `:``}
-    <div class="actions">
-      <span class="likeBtn">❤️ ${p.likes||0}</span>
-      <span class="commentBtn">💬 ${p.comments?.length||0}</span>
-    </div>
+    ${p.media?.length?`<div class="media-carousel" data-index="0">${p.media.map((m,i)=>{
+      if(m.type.startsWith("image/")) return `<img src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="image">`;
+      else return `<video src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="video" controls></video>`;
+    }).join("")}${p.media.length>1?`<button class="carousel-btn prev">‹</button><button class="carousel-btn next">›</button>`:``}</div>`:``}
+    <div class="actions"><span class="likeBtn">❤️ ${p.likes||0}</span><span class="commentBtn">💬 ${p.comments?.length||0}</span></div>
     <div class="comments" style="display:none;"></div>
   `;
 
   const postTextDiv = d.querySelector(".post-text");
   const seeMoreBtn = d.querySelector(".see-more");
   if(seeMoreBtn){
-    seeMoreBtn.onclick=()=>{ 
-      const expanded=seeMoreBtn.getAttribute("data-expanded")==="true";
-      postTextDiv.textContent=expanded?shortText:fullText;
-      seeMoreBtn.textContent=expanded?"See more":"See less";
-      seeMoreBtn.setAttribute("data-expanded",!expanded);
-    };
+    seeMoreBtn.onclick = ()=>{ const expanded = seeMoreBtn.getAttribute("data-expanded")==="true"; postTextDiv.textContent = expanded?shortText:fullText; seeMoreBtn.textContent = expanded?"See more":"See less"; seeMoreBtn.setAttribute("data-expanded",!expanded); }
   }
 
-  // Like button
-  d.querySelector(".likeBtn").onclick=()=>socket.emit("likePost",p.id);
+  d.querySelector(".likeBtn").onclick = ()=>socket.emit("likePost",p.id);
+  const commentBtn = d.querySelector(".commentBtn");
+  const commentBox = d.querySelector(".comments");
+  commentBtn.onclick = ()=>{ commentBox.style.display=commentBox.style.display==="none"?"block":"none"; showComments(p,commentBox); }
 
-  // Comments
-  const commentBtn=d.querySelector(".commentBtn");
-  const commentBox=d.querySelector(".comments");
-  commentBtn.onclick=()=>{ 
-    commentBox.style.display=commentBox.style.display==="none"?"block":"none";
-    showComments(p, commentBox);
-  };
-
-  // Carousel buttons
-  const carousel=d.querySelector(".media-carousel");
-  if(carousel){
-    carousel.addEventListener("click", e=>{
-      if(e.target.classList.contains("carousel-btn")){
-        const images=[...carousel.querySelectorAll("img,video")];
-        let idx=parseInt(carousel.dataset.index);
-        idx = e.target.classList.contains("next") ? (idx+1)%images.length : (idx-1+images.length)%images.length;
-        images.forEach((el,i)=>el.classList.toggle("active",i===idx));
-        carousel.dataset.index=idx;
-      }
-    });
-    // Click to fullscreen
-    [...carousel.querySelectorAll("img,video")].forEach(mediaEl=>{
-      mediaEl.style.cursor="zoom-in";
-      mediaEl.onclick=()=>{
-        fsContent.innerHTML="";
-        const clone=mediaEl.cloneNode(true);
-        clone.style.maxWidth="90%";
-        clone.style.maxHeight="80%";
-        clone.controls=mediaEl.tagName==="VIDEO";
-        fsContent.appendChild(clone);
-        fsDownload.onclick=()=>{ const a=document.createElement("a"); a.href=mediaEl.src; a.download=mediaEl.src.split("/").pop(); a.click();}
-        fullscreenOverlay.style.display="flex";
-      }
-    });
-  }
-
-  // Close fullscreen
-  fsClose.onclick=()=>fullscreenOverlay.style.display="none";
-
-  // Delete button
+  // DELETE BUTTON
   if(editable){
     const del = document.createElement("button");
     del.textContent="Delete"; del.className="btn"; del.style.marginTop="10px";
-    del.onclick=()=>socket.emit("deletePost",p.id);
+    del.onclick=()=>{
+      allPosts = allPosts.filter(post=>post.id!==p.id);
+      renderAllPosts();
+      socket.emit("deletePost",p.id);
+    }
     d.append(del);
   }
 
   return d;
 }
 
+function renderAllPosts(){
+  feed.innerHTML=""; teacherFeed.innerHTML="";
+  allPosts.forEach(p=>{ feed.append(postCard(p,false)); teacherFeed.append(postCard(p,true)); });
+}
+
 // COMMENTS
 function showComments(p,box){
   box.innerHTML="";
   (p.comments||[]).forEach((c,i)=>{
-    const commentDiv=document.createElement("div");
-    commentDiv.className="comment"; commentDiv.style.display="flex"; commentDiv.style.justifyContent="space-between"; commentDiv.style.alignItems="center";
-
-    const textSpan=document.createElement("span"); textSpan.textContent=c;
-    const delBtn=document.createElement("button"); delBtn.textContent="Delete";
-    delBtn.style.marginLeft="10px"; delBtn.style.background="#ff5c5c"; delBtn.style.color="white";
-    delBtn.style.border="none"; delBtn.style.padding="2px 6px"; delBtn.style.borderRadius="4px"; delBtn.style.cursor="pointer";
+    const commentDiv = document.createElement("div"); commentDiv.className="comment"; commentDiv.style.display="flex"; commentDiv.style.justifyContent="space-between"; commentDiv.style.alignItems="center";
+    const textSpan = document.createElement("span"); textSpan.textContent=c;
+    const delBtn = document.createElement("button"); delBtn.textContent="Delete"; delBtn.style.marginLeft="10px"; delBtn.style.background="#ff5c5c"; delBtn.style.color="white"; delBtn.style.border="none"; delBtn.style.padding="2px 6px"; delBtn.style.borderRadius="4px"; delBtn.style.cursor="pointer";
     delBtn.onclick=()=>socket.emit("deleteComment",{id:p.id,index:i});
-
-    commentDiv.appendChild(textSpan); commentDiv.appendChild(delBtn);
-    box.appendChild(commentDiv);
+    commentDiv.appendChild(textSpan); commentDiv.appendChild(delBtn); box.appendChild(commentDiv);
   });
-  const f=document.createElement("input");
-  f.placeholder="Write comment..."; f.style="width:100%;margin-top:6px;padding:6px;border-radius:6px;border:1px solid #ccc";
-  f.addEventListener("keypress",e=>{
-    if(e.key==="Enter" && f.value.trim()){
-      const val=f.value.trim();
-      socket.emit("newComment",{id:p.id,comment:val});
-      f.value="";
-    }
-  });
+  const f = document.createElement("input"); f.placeholder="Write comment..."; f.style="width:100%;margin-top:6px;padding:6px;border-radius:6px;border:1px solid #ccc";
+  f.addEventListener("keypress",e=>{ if(e.key==="Enter" && f.value.trim()){ socket.emit("newComment",{id:p.id,comment:f.value.trim()}); f.value=""; } });
   box.appendChild(f);
 }
 
-// SERVER FETCH
-fetch("https://caisen-high-server.onrender.com/api/posts")
-  .then(res=>res.json())
-  .then(data=>{ allPosts=data.sort((a,b)=>new Date(b.created)-new Date(a.created)); renderAllPosts(); })
-  .catch(err=>console.error(err));
+// FULLSCREEN
+fsClose.onclick=()=>fullscreenOverlay.style.display="none";
+
+// SOCKET LISTENERS
+socket.on("allPosts",posts=>{ allPosts=posts.sort((a,b)=>new Date(b.created)-new Date(a.created)); renderAllPosts(); });
+socket.on("postAdded",post=>{ allPosts.unshift(post); renderAllPosts(); });
+socket.on("postUpdated",post=>{ const idx=allPosts.findIndex(p=>p.id===post.id); if(idx!==-1) allPosts[idx]=post; renderAllPosts(); });
+
 </script>
 </body>
-    </html>
+  </html>
