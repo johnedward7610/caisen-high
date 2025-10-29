@@ -702,6 +702,14 @@ function updateSinglePostUI(postId) {
 
 subscribeToNotifications();
 </script>
+    <script>
+fetch("https://caisen-high-server.onrender.com/api/posts")
+  .then(res => res.json())
+  .then(data => {
+    console.log("Posts from server:", data);
+  })
+  .catch(err => console.error("Error loading posts:", err));
+    </script>
 </body>
 </html>
 
