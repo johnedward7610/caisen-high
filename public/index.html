@@ -6,292 +6,141 @@
 <title>CAISEN CONNECTIONS</title>
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <style>
-/* Scrollable media carousel */
-/* Carousel container */
-.media-carousel {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin-top: 8px;
-  border-radius: 8px;
-  overflow: hidden;
+/* ---------- GENERAL ---------- */
+:root{
+  --bg:#fbf8ff; --card:#fff; --accent:#9c6bff; --muted:#7b6f9a;
+}
+body{
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  margin:0;
+  padding:20px;
+  box-sizing:border-box;
+  color:#111;
+}
+header{
+  display:flex;gap:12px;align-items:center;
+  justify-content:space-between;
+  max-width:900px;margin:0 auto 18px;
+  padding:12px 16px;
+  border-radius:12px;
+  background:linear-gradient(90deg,#e8dbff,#f3eaff);
+  box-shadow:0 6px 18px rgba(22,7,53,0.06)
+}
+header h1{font-size:18px;margin:0;color:#2b1b5b}
+.nav-buttons{display:flex;gap:8px}
+.nav-buttons button{
+  background:transparent;border:1px solid rgba(43,27,91,0.12);
+  padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)
+}
+.nav-buttons button.active{
+  background:var(--accent);color:white;border-color:var(--accent)
+}
+.app{
+  max-width:900px;margin:0 auto;
+  display:grid;grid-template-columns:1fr;gap:18px
+}
+.screen{display:none}
+.screen.show{display:block}
+.post-card{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 20px rgba(22,7,53,0.05)}
+textarea{width:100%;min-height:70px;border-radius:10px;padding:10px;border:1px solid #eee;resize:vertical;font-size:14px}
+.row{display:flex;gap:10px;align-items:center;margin-top:10px}
+.btn{background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:none;cursor:pointer}
+#feed,#teacherFeed{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.post{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(22,7,53,0.05)}
+.post-head{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.post-text{word-break:break-word;white-space:normal;flex:1;min-width:0}
+.avatar{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;object-fit:cover;
+  background:linear-gradient(135deg,#f2e6ff,#e6d3ff);
+  display:flex;align-items:center;justify-content:center;color:#3e2b6f;
+  font-weight:700;font-size:18px
+}
+.comment{background:#f6f3ff;padding:8px;border-radius:10px;margin-top:8px;font-size:14px}
+.actions{display:flex;gap:12px;margin-top:8px;font-size:14px;color:#6d5c96;cursor:pointer}
+
+/* ---------- FULLSCREEN ---------- */
+.fullscreen-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.9);
+  display:none;align-items:center;justify-content:center;
+  z-index:2000;flex-direction:column;
+}
+.fullscreen-overlay #fsContent{
+  max-width:90%;max-height:80%;
+}
+.fullscreen-overlay video,img{
+  max-width:90%;max-height:80%;border-radius:10px;
+}
+.fs-btns{
+  width:100%;display:flex;justify-content:space-between;padding:15px;
+  position:absolute;top:0;box-sizing:border-box;
+}
+.fs-btns button{
+  background: rgba(255,255,255,0.25);border:none;color:white;
+  padding:8px 14px;border-radius:8px;cursor:pointer;font-size:16px;
 }
 
-.media-carousel img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  display: none;
-}
-
-.media-carousel img.active {
-  display: block;
-}
-
-/* Carousel navigation */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.3);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-.carousel-btn.prev {
-  left: 8px;
-}
-
-.carousel-btn.next {
-  right: 8px;
-}
-/* Fullscreen overlay */
-.fullscreen-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  flex-direction: column;
-}
-
-.fullscreen-overlay img {
-  max-width: 90%;
-  max-height: 80%;
-  margin-bottom: 20px;
-  border-radius: 12px;
-}
-
-.fs-btns {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  top: 20px;
-  padding: 0 20px;
-  box-sizing: border-box;
-}
-
-.fs-btns button {
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-  :root{
-    --bg:#fbf8ff; --card:#fff; --accent:#9c6bff; --muted:#7b6f9a;
-  }
-  body{font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;box-sizing:border-box;color:#111;}
-  header{display:flex;gap:12px;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 18px;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,#e8dbff,#f3eaff);box-shadow:0 6px 18px rgba(22,7,53,0.06)}
-  header h1{font-size:18px;margin:0;color:#2b1b5b}
-  .nav-buttons{display:flex;gap:8px}
-  .nav-buttons button{background:transparent;border:1px solid rgba(43,27,91,0.12);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)}
-  .nav-buttons button.active{background:var(--accent);color:white;border-color:var(--accent)}
-  .app{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:18px}
-  .screen{display:none}
-  .screen.show{display:block}
-  .post-card{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 20px rgba(22,7,53,0.05)}
-  textarea{width:100%;min-height:70px;border-radius:10px;padding:10px;border:1px solid #eee;resize:vertical;font-size:14px}
-  .row{display:flex;gap:10px;align-items:center;margin-top:10px}
-  .btn{background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:none;cursor:pointer}
-  #feed,#teacherFeed{display:flex;flex-direction:column;gap:14px;margin-top:6px}
-  .post{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(22,7,53,0.05)}
-.post-head {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  flex-wrap: wrap; /* allows text to wrap properly */
-}
-
-.post-text {
-  word-break: break-word;
-  white-space: normal;
-  flex: 1; /* forces text to not shrink weirdly */
-  min-width: 0;
-}
-  .avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  flex-shrink: 0; /* <-- THIS FIXES WARPING */
-  object-fit: cover; /* keeps shape if image replaces it later */
-  background: linear-gradient(135deg,#f2e6ff,#e6d3ff);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#3e2b6f;
-  font-weight:700;
-  font-size: 18px;
-}
-  .comment{background:#f6f3ff;padding:8px;border-radius:10px;margin-top:8px;font-size:14px}
-  .actions{display:flex;gap:12px;margin-top:8px;font-size:14px;color:#6d5c96;cursor:pointer}
-  /* --- FULLSCREEN OVERLAY --- */
-.fullscreen-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  flex-direction: column;
-}
-
-.fullscreen-overlay #fsContent {
-  max-width: 90%;
-  max-height: 80%;
-}
-
-.fullscreen-overlay video,
-.fullscreen-overlay img {
-  max-width: 90%;
-  max-height: 80%;
-  border-radius: 10px;
-}
-
-/* Close + Download buttons */
-.fs-btns {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  position: absolute;
-  top: 0;
-  box-sizing: border-box;
-}
-
-.fs-btns button {
-  background: rgba(255,255,255,0.25);
-  border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  backdrop-filter: blur(4px);
-}
-
-/* --- MEDIA CAROUSEL --- */
-.media-carousel {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin-top: 8px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.media-carousel img,
-.media-carousel video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: none;
-  cursor: pointer;
-}
-
-.media-carousel img.active,
-.media-carousel video.active {
-  display: block;
-}
-
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.35);
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.carousel-btn.prev { left: 6px; }
-.carousel-btn.next { right: 6px; }
-.post-header {
-  display: flex;
-  align-items: flex-start; /* makes the pfp stay at the top-left */
-  gap: 10px;
-}
-
-/* Profile circle */
-.post-pfp {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  flex-shrink: 0; /* <-- prevents shrinking */
-  object-fit: cover; /* keeps image shape if it's not a letter */
-  background: #d9c4ff; /* or whatever your color is */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 20px;
-  color: #4a2fa3;
+/* ---------- MEDIA CAROUSEL ---------- */
+.media-carousel{position:relative;width:300px;height:300px;margin-top:8px;border-radius:10px;overflow:hidden}
+.media-carousel img,.media-carousel video{width:100%;height:100%;object-fit:cover;display:none;cursor:pointer}
+.media-carousel img.active,.media-carousel video.active{display:block}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.35);border:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold}
+.carousel-btn.prev{left:6px}
+.carousel-btn.next{right:6px}
+.post-header{display:flex;align-items:flex-start;gap:10px}
+.post-pfp{
+  width:45px;height:45px;border-radius:50%;flex-shrink:0;object-fit:cover;
+  background:#d9c4ff;display:flex;justify-content:center;align-items:center;
+  font-weight:bold;font-size:20px;color:#4a2fa3;
 }
 </style>
 </head>
 <body>
-  <header>
-    
-    <h1>Caisen Connections</h1>
-    <div class="nav-buttons">
-      <button id="studentBtn" class="active">Student View</button>
-      <button id="teacherBtn">Teacher View</button>
-    </div>
-  </header>
-  
-  <div class="app">
-    <div id="studentScreen" class="screen show">
-      <h2>Student Feed</h2>
-      <div id="feed"></div>
-    </div>
-    
-    <div id="teacherScreen" class="screen">
-      <h2>Teacher — Create Post</h2>
-      <div class="post-card">
-        <textarea id="postText" placeholder="Write something..."></textarea>
-        <div class="row">
-          <input type="file" id="postFiles" accept="image/*,video/*" multiple>
-          <button class="btn" id="postBtn">Post</button>
-        </div>
+<header>
+  <h1>Caisen Connections</h1>
+  <div class="nav-buttons">
+    <button id="studentBtn" class="active">Student View</button>
+    <button id="teacherBtn">Teacher View</button>
+  </div>
+</header>
+
+<div class="app">
+  <div id="studentScreen" class="screen show">
+    <h2>Student Feed</h2>
+    <div id="feed"></div>
+  </div>
+
+  <div id="teacherScreen" class="screen">
+    <h2>Teacher — Create Post</h2>
+    <div class="post-card">
+      <textarea id="postText" placeholder="Write something..."></textarea>
+      <div class="row">
+        <input type="file" id="postFiles" accept="image/*,video/*" multiple>
+        <button class="btn" id="postBtn">Post</button>
       </div>
-      <h3>Your Posts</h3>
-      <div id="teacherFeed"></div>
-      <button id="logoutBtn" class="btn" style="margin-top:15px;">Logout</button>
     </div>
+    <h3>Your Posts</h3>
+    <div id="teacherFeed"></div>
+    <button id="logoutBtn" class="btn" style="margin-top:15px;">Logout</button>
   </div>
-  
-  <div id="teacherLogin" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;">
-    <div style="background:white;padding:20px;border-radius:12px;width:260px;">
-      <h3>Teacher Login</h3>
-      <input id="teacherKeyInput" type="password" placeholder="Teacher Key" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ccc;margin-bottom:10px;">
-      <button id="teacherLoginBtn" class="btn" style="width:100%;">Unlock</button>
-    </div>
+</div>
+
+<div id="teacherLogin" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;">
+  <div style="background:white;padding:20px;border-radius:12px;width:260px;">
+    <h3>Teacher Login</h3>
+    <input id="teacherKeyInput" type="password" placeholder="Teacher Key" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ccc;margin-bottom:10px;">
+    <button id="teacherLoginBtn" class="btn" style="width:100%;">Unlock</button>
   </div>
-  
-  <!-- FULLSCREEN OVERLAY -->
-  
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <div id="fullscreenOverlay" class="fullscreen-overlay">
+</div>
+
+<!-- FULLSCREEN OVERLAY -->
+<div id="fullscreenOverlay" class="fullscreen-overlay">
   <div class="fs-btns">
     <button id="closeFS">Close</button>
     <a id="downloadFS" download><button>Download</button></a>
   </div>
   <div id="fsContent"></div>
+</div>
 
 <script>
 const TEACHER_KEY = "TEACHER-123";
@@ -314,27 +163,17 @@ const postBtn = document.getElementById("postBtn");
 const postText = document.getElementById("postText");
 const postFiles = document.getElementById("postFiles");
 
-// Create fullscreen overlay
-const fullscreenOverlay = document.createElement("div");
-fullscreenOverlay.className = "fullscreen-overlay";
-fullscreenOverlay.innerHTML = `
-  <div class="fs-btns">
-    <button id="fsDownload">⬇️</button>
-    <button id="fsClose">✖️</button>
-  </div>
-  <div id="fsContent"></div>
-`;
-document.body.appendChild(fullscreenOverlay);
-const fsClose = document.getElementById("fsClose");
-const fsDownload = document.getElementById("fsDownload");
+const fullscreenOverlay = document.getElementById("fullscreenOverlay");
+const fsClose = document.getElementById("closeFS");
+const fsDownload = document.getElementById("downloadFS");
 const fsContent = document.getElementById("fsContent");
 
-// Show/Hide teacher/student screens
+// SHOW/HIDE SCREENS
 function showTeacher(){ studentScreen.classList.remove("show"); teacherScreen.classList.add("show"); studentBtn.classList.remove("active"); teacherBtn.classList.add("active"); }
 function showStudent(){ teacherScreen.classList.remove("show"); studentScreen.classList.add("show"); teacherBtn.classList.remove("active"); studentBtn.classList.add("active"); }
 
 studentBtn.onclick=showStudent;
-teacherBtn.onclick=()=>{ if(localStorage.teacherUnlocked==="yes") showTeacher(); else teacherLogin.style.display="flex"; };
+teacherBtn.onclick=()=>{ localStorage.teacherUnlocked==="yes"?showTeacher():teacherLogin.style.display="flex"; };
 teacherLoginBtn.onclick=()=>{
   if(teacherKeyInput.value===TEACHER_KEY){
     localStorage.teacherUnlocked="yes";
@@ -360,81 +199,65 @@ postBtn.onclick=async()=>{
   }
 
   const post = {
-  id: Date.now(),
-  text,
-  media,
-  likes: 0,
-  comments: [],
-  created: new Date(),
-  postedBy: (await navigator.serviceWorker.ready).pushManager.getSubscription().then(s => s?.endpoint)
-};
-socket.emit("newPost", post);
+    id: Date.now(),
+    text,
+    media,
+    likes: 0,
+    comments: [],
+    created: new Date(),
+    postedBy: "teacher"
+  };
+  socket.emit("newPost", post);
   postText.value=""; postFiles.value="";
 }
 
 // SOCKET EVENTS
 socket.on("allPosts", posts=>{
-  allPosts = posts.sort((a,b)=>b.created - a.created);
+  allPosts = posts.sort((a,b)=>new Date(b.created)-new Date(a.created));
+  renderAllPosts();
+});
+socket.on("postAdded", post=>{
+  allPosts.unshift(post);
+  renderAllPosts();
+});
+socket.on("postUpdated", post=>{
+  const idx = allPosts.findIndex(p=>p.id===post.id);
+  if(idx!==-1) allPosts[idx]=post;
+  renderAllPosts();
+});
+
+// RENDER POSTS
+function renderAllPosts(){
   feed.innerHTML=""; teacherFeed.innerHTML="";
   allPosts.forEach(p=>{
     feed.append(postCard(p,false));
     teacherFeed.append(postCard(p,true));
   });
-});
-// When a new post is created
-socket.on("postAdded", (post) => {
-  allPosts.unshift(post); // add to start
-  feed.prepend(postCard(post, false));
-  teacherFeed.prepend(postCard(post, true));
-});
+}
 
-// When a post gets liked or commented
-socket.on("postUpdated", (updatedPost) => {
-  // Update local list
-  const index = allPosts.findIndex(p => p.id === updatedPost.id);
-  if (index !== -1) {
-    allPosts[index] = updatedPost;
-  }
-  
-  // Update only that post in the UI
-  updateSinglePostUI(updatedPost.id);
-});
-
-// CREATE POST CARD
 function postCard(p, editable){
   const d = document.createElement("div");
   d.className="post";
+  d.dataset.id = p.id;
 
-  // Date display
   const dateStr = new Date(p.created).toLocaleString();
-
-  // Split text into words
   const words = p.text.trim().split(/\s+/);
-  const maxWords = 15;
-  let shortText = p.text;
-  let fullText = p.text;
-  let isTruncated = false;
-
-  if(words.length > maxWords){
-    shortText = words.slice(0, maxWords).join(" ") + "...";
-    isTruncated = true;
-  }
+  const maxWords=15;
+  let shortText=p.text, fullText=p.text, isTruncated=false;
+  if(words.length>maxWords){ shortText=words.slice(0,maxWords).join(" ")+"..."; isTruncated=true; }
 
   d.innerHTML = `
     <div class="post-head" style="justify-content:space-between">
       <div style="display:flex;gap:10px;align-items:flex-start">
         <div class="avatar">T</div>
         <div class="post-text">${shortText}</div>
-        ${isTruncated ? '<span class="see-more" style="color:var(--accent);cursor:pointer;margin-left:6px;">See more</span>' : ''}
+        ${isTruncated?'<span class="see-more" style="color:var(--accent);cursor:pointer;margin-left:6px;">See more</span>':''}
       </div>
       <div style="font-size:12px;color:#999">${dateStr}</div>
     </div>
     ${p.media?.length?`
       <div class="media-carousel" data-index="0">
-        ${p.media.map((m,i)=>{
-          if(m.type.startsWith("image/")) return `<img src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="image">`;
-          else return `<video src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="video" controls></video>`;
-        }).join("")}
+        ${p.media.map((m,i)=>m.type.startsWith("image/")?`<img src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="image">`:`<video src="${m.src}" class="${i===0?'active':''}" data-index="${i}" data-type="video" controls></video>`).join("")}
         ${p.media.length>1?`<button class="carousel-btn prev">‹</button><button class="carousel-btn next">›</button>`:``}
       </div>
     `:``}
@@ -447,68 +270,62 @@ function postCard(p, editable){
 
   const postTextDiv = d.querySelector(".post-text");
   const seeMoreBtn = d.querySelector(".see-more");
+  if(seeMoreBtn){
+    seeMoreBtn.onclick=()=>{ 
+      const expanded=seeMoreBtn.getAttribute("data-expanded")==="true";
+      postTextDiv.textContent=expanded?shortText:fullText;
+      seeMoreBtn.textContent=expanded?"See more":"See less";
+      seeMoreBtn.setAttribute("data-expanded",!expanded);
+    };
+  }
 
-  if (seeMoreBtn) {
-  seeMoreBtn.onclick = () => {
-    const expanded = seeMoreBtn.getAttribute("data-expanded") === "true";
-    postTextDiv.textContent = expanded ? shortText : fullText;
-    seeMoreBtn.textContent = expanded ? "See more" : "See less";
-    seeMoreBtn.setAttribute("data-expanded", !expanded);
-  };
-}
   // Like button
-  d.querySelector(".likeBtn").onclick = () => socket.emit("likePost", p.id);
+  d.querySelector(".likeBtn").onclick=()=>socket.emit("likePost",p.id);
 
   // Comments
-  const commentBtn = d.querySelector(".commentBtn");
-  const commentBox = d.querySelector(".comments");
-  commentBtn.onclick = () => {
-    commentBox.style.display = commentBox.style.display==="none"?"block":"none";
+  const commentBtn=d.querySelector(".commentBtn");
+  const commentBox=d.querySelector(".comments");
+  commentBtn.onclick=()=>{ 
+    commentBox.style.display=commentBox.style.display==="none"?"block":"none";
     showComments(p, commentBox);
   };
 
   // Carousel buttons
-  const carousel = d.querySelector(".media-carousel");
+  const carousel=d.querySelector(".media-carousel");
   if(carousel){
     carousel.addEventListener("click", e=>{
       if(e.target.classList.contains("carousel-btn")){
-        const images = [...carousel.querySelectorAll("img,video")];
-        let idx = parseInt(carousel.dataset.index);
+        const images=[...carousel.querySelectorAll("img,video")];
+        let idx=parseInt(carousel.dataset.index);
         idx = e.target.classList.contains("next") ? (idx+1)%images.length : (idx-1+images.length)%images.length;
-        images.forEach((el,i)=>el.classList.toggle("active", i===idx));
-        carousel.dataset.index = idx;
+        images.forEach((el,i)=>el.classList.toggle("active",i===idx));
+        carousel.dataset.index=idx;
       }
     });
-
     // Click to fullscreen
     [...carousel.querySelectorAll("img,video")].forEach(mediaEl=>{
-      mediaEl.style.cursor = "zoom-in";
-      mediaEl.onclick = ()=>{
-        fsContent.innerHTML = "";
-        const clone = mediaEl.cloneNode(true);
-        clone.style.maxWidth = "90%";
-        clone.style.maxHeight = "80%";
-        clone.controls = mediaEl.tagName==="VIDEO";
+      mediaEl.style.cursor="zoom-in";
+      mediaEl.onclick=()=>{
+        fsContent.innerHTML="";
+        const clone=mediaEl.cloneNode(true);
+        clone.style.maxWidth="90%";
+        clone.style.maxHeight="80%";
+        clone.controls=mediaEl.tagName==="VIDEO";
         fsContent.appendChild(clone);
-        fsDownload.onclick = ()=>{
-          const a = document.createElement("a");
-          a.href = mediaEl.src;
-          a.download = mediaEl.src.split("/").pop();
-          a.click();
-        }
+        fsDownload.onclick=()=>{ const a=document.createElement("a"); a.href=mediaEl.src; a.download=mediaEl.src.split("/").pop(); a.click();}
         fullscreenOverlay.style.display="flex";
       }
     });
   }
 
   // Close fullscreen
-  fsClose.onclick = ()=> fullscreenOverlay.style.display="none";
+  fsClose.onclick=()=>fullscreenOverlay.style.display="none";
 
-  // Delete button if editable
+  // Delete button
   if(editable){
     const del = document.createElement("button");
-    del.textContent = "Delete"; del.className = "btn"; del.style.marginTop = "10px";
-    del.onclick = ()=> socket.emit("deletePost", p.id);
+    del.textContent="Delete"; del.className="btn"; del.style.marginTop="10px";
+    del.onclick=()=>socket.emit("deletePost",p.id);
     d.append(del);
   }
 
@@ -516,18 +333,14 @@ function postCard(p, editable){
 }
 
 // COMMENTS
-function showComments(p, box){
+function showComments(p,box){
   box.innerHTML="";
   (p.comments||[]).forEach((c,i)=>{
-    const commentDiv = document.createElement("div");
-    commentDiv.className="comment";
-    commentDiv.style.display="flex"; commentDiv.style.justifyContent="space-between"; commentDiv.style.alignItems="center";
+    const commentDiv=document.createElement("div");
+    commentDiv.className="comment"; commentDiv.style.display="flex"; commentDiv.style.justifyContent="space-between"; commentDiv.style.alignItems="center";
 
-    const textSpan = document.createElement("span");
-    textSpan.textContent = c;
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent="Delete";
+    const textSpan=document.createElement("span"); textSpan.textContent=c;
+    const delBtn=document.createElement("button"); delBtn.textContent="Delete";
     delBtn.style.marginLeft="10px"; delBtn.style.background="#ff5c5c"; delBtn.style.color="white";
     delBtn.style.border="none"; delBtn.style.padding="2px 6px"; delBtn.style.borderRadius="4px"; delBtn.style.cursor="pointer";
     delBtn.onclick=()=>socket.emit("deleteComment",{id:p.id,index:i});
@@ -535,181 +348,23 @@ function showComments(p, box){
     commentDiv.appendChild(textSpan); commentDiv.appendChild(delBtn);
     box.appendChild(commentDiv);
   });
-
-  const f = document.createElement("input");
+  const f=document.createElement("input");
   f.placeholder="Write comment..."; f.style="width:100%;margin-top:6px;padding:6px;border-radius:6px;border:1px solid #ccc";
-  f.addEventListener("keypress", e => {
-  if (e.key === "Enter" && f.value.trim()) {
-    const val = f.value.trim();
-    socket.emit("newComment", { id: p.id, comment: val });
-    f.value = ""; // only clear after sending
-  }
-});
+  f.addEventListener("keypress",e=>{
+    if(e.key==="Enter" && f.value.trim()){
+      const val=f.value.trim();
+      socket.emit("newComment",{id:p.id,comment:val});
+      f.value="";
+    }
+  });
   box.appendChild(f);
 }
-// FULLSCREEN VIEW HANDLER
-function enableFullscreenBehavior(){
-  document.querySelectorAll(".media-carousel img, .media-carousel video").forEach(el=>{
-    el.onclick = ()=>{
-      const overlay = document.getElementById("fullscreenOverlay");
-      const fsContent = document.getElementById("fsContent");
-      const download = document.getElementById("downloadFS");
 
-      fsContent.innerHTML = "";
-
-      let clone;
-      if(el.tagName === "IMG"){
-        clone = document.createElement("img");
-        clone.src = el.src;
-      } else {
-        clone = document.createElement("video");
-        clone.src = el.src;
-        clone.controls = true;
-        clone.autoplay = true;
-      }
-
-      fsContent.appendChild(clone);
-      download.href = el.src;
-
-      overlay.style.display = "flex";
-    };
-  });
-}
-
-// Close button
-document.getElementById("closeFS").onclick = ()=>{
-  document.getElementById("fullscreenOverlay").style.display = "none";
-};
-
-// Re-enable fullscreen click behavior whenever posts refresh
-socket.on("allPosts", ()=>{
-  setTimeout(enableFullscreenBehavior, 100);
-});
-// ---------- PUSH SUBSCRIPTION (client) ----------
-const VAPID_PUBLIC_KEY = 'REPLACE_WITH_YOUR_VAPID_PUBLIC_KEY'; // <- paste your publicKey here
-
-async function urlBase64ToUint8Array(base64String) {
-  // helper to convert VAPID key
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-  const rawData = atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
-  return outputArray;
-}
-
-async function subscribeForPushIfNeeded() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    console.warn('Push not supported in this browser.');
-    return;
-  }
-
-  try {
-    // Register service worker (path must match where you serve sw.js)
-    const reg = await navigator.serviceWorker.register('/sw.js');
-    console.log('Service worker registered:', reg);
-
-    // Check subscription
-    const existingSub = await reg.pushManager.getSubscription();
-    if (existingSub) {
-      console.log('Already subscribed to push');
-      // ensure server has it: send to /subscribe anyway (idempotent)
-      await sendSubscriptionToServer(existingSub);
-      return;
-    }
-
-    // Ask for permission
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      console.warn('Notification permission not granted.');
-      return;
-    }
-
-    // Subscribe
-    const sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    });
-
-    console.log('Push subscription:', sub);
-    await sendSubscriptionToServer(sub);
-  } catch (err) {
-    console.error('Failed to subscribe to push', err);
-  }
-}
-
-async function sendSubscriptionToServer(subscription) {
-  // Determine role — match your app logic
-  const role = (localStorage.teacherUnlocked === 'yes') ? 'teacher' : 'student';
-
-  await fetch('/subscribe', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ subscription, role })
-  });
-}
-
-// call on page load
-subscribeForPushIfNeeded();
-</script>
-<script>
-async function subscribeToNotifications() {
-  if (!('serviceWorker' in navigator)) return;
-
-  const register = await navigator.serviceWorker.register('/sw.js');
-
-  const subscription = await register.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: "BJObTyA1yj3TpMXHLmXvwpx3sjk45HW9Ly3Cw0aKWwCUkxo_Uo0y3BoeOCvBv0uOZ8Mdskcb10r7RpycoeQ37OQ"
-  });
-
-  // send subscription to server
-  await fetch('/subscribe', {
-    method: 'POST',
-    body: JSON.stringify(subscription),
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
-function updateSinglePostUI(postId) {
-  const postElems = document.querySelectorAll(".post");
-  
-  postElems.forEach(el => {
-    const likeBtn = el.querySelector(".likeBtn");
-    if (!likeBtn) return;
-    
-    const text = likeBtn.textContent;
-    const match = text.match(/❤️ (\d+)/);
-    const displayedLikes = match ? parseInt(match[1]) : 0;
-    
-    // Find the matching post by comparing its likes text number to our array data
-    const post = allPosts.find(p => p.id === postId);
-    if (!post) return;
-    
-    // Replace the whole element with a newly rendered card
-    if (el.contains(likeBtn) && displayedLikes === post.likes) {
-      // Do nothing if same post
-    }
-  });
-  
-  // Re-render feed only replacing *that* one post
-  feed.innerHTML = "";
-  teacherFeed.innerHTML = "";
-  allPosts.forEach(p => {
-    feed.append(postCard(p, false));
-    teacherFeed.append(postCard(p, true));
-  });
-}
-
-subscribeToNotifications();
-</script>
-    <script>
+// SERVER FETCH
 fetch("https://caisen-high-server.onrender.com/api/posts")
-  .then(res => res.json())
-  .then(data => {
-    console.log("Posts from server:", data);
-  })
-  .catch(err => console.error("Error loading posts:", err));
-    </script>
+  .then(res=>res.json())
+  .then(data=>{ allPosts=data.sort((a,b)=>new Date(b.created)-new Date(a.created)); renderAllPosts(); })
+  .catch(err=>console.error(err));
+</script>
 </body>
-</html>
-
+    </html>
